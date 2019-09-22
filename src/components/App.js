@@ -10,14 +10,13 @@ import Error from "../pages/error";
 import Login from "../pages/login";
 
 // context
-// import { useUserState } from "../context/UserContext";
+import { useUserState } from "../context/UserContext";
 
 axios.defaults.baseURL = "https://anthraxploit-api.herokuapp.com";
 
 export default function App() {
 	// global
-	//var { isAuthenticated } = useUserState();
-	var isAuthenticated = true;
+	var { isAuthenticated } = useUserState();
 
 	return (
 		<HashRouter>

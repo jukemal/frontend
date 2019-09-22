@@ -66,11 +66,11 @@ const structure = [
 	{ id: 6, type: "divider" },
 	{ id: 7, type: "title", label: "Settings" },
 	{ id: 8, label: "Users", link: "/app/users", icon: <GroupIcon /> },
-	{ id: 9, label: "Config", link: "/app/config", icon: <SettingsIcon /> },
-	{ id: 10, type: "divider" },
-	{ id: 11, type: "title", label: "HELP" },
-	{ id: 12, label: "Support", link: "/app/support", icon: <SupportIcon /> },
-	{ id: 13, label: "FAQ", link: "/app/faq", icon: <FAQIcon /> }
+	{ id: 9, label: "Config", link: "/app/config", icon: <SettingsIcon /> }//,
+	// { id: 10, type: "divider" },
+	// { id: 11, type: "title", label: "HELP" },
+	// { id: 12, label: "Support", link: "/app/support", icon: <SupportIcon /> },
+	// { id: 13, label: "FAQ", link: "/app/faq", icon: <FAQIcon /> }
 ];
 
 function Sidebar({ location }) {
