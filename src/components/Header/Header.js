@@ -35,36 +35,7 @@ import {
 } from "../../context/LayoutContext";
 import { useUserDispatch, signOut } from "../../context/UserContext";
 
-const messages = [
-  {
-    id: 0,
-    variant: "warning",
-    name: "Jane Hew",
-    message: "Hey! How is it going?",
-    time: "9:32",
-  },
-  {
-    id: 1,
-    variant: "success",
-    name: "Lloyd Brown",
-    message: "Check out my new Dashboard",
-    time: "9:18",
-  },
-  {
-    id: 2,
-    variant: "primary",
-    name: "Mark Winstein",
-    message: "I want rearrange the appointment",
-    time: "9:15",
-  },
-  {
-    id: 3,
-    variant: "secondary",
-    name: "Liana Dutti",
-    message: "Good news from sale department",
-    time: "9:09",
-  },
-];
+
 
 const notifications = [
   { id: 0, color: "warning", message: "Check out this awesome ticket" },
@@ -72,20 +43,20 @@ const notifications = [
     id: 1,
     color: "success",
     type: "info",
-    message: "What is the best way to get ...",
+    message: "What is the best way to get ..."
   },
   {
     id: 2,
     color: "secondary",
     type: "notification",
-    message: "This is just a simple notification",
+    message: "This is just a simple notification"
   },
   {
     id: 3,
     color: "primary",
     type: "e-commerce",
-    message: "12 new orders has arrived today",
-  },
+    message: "12 new orders has arrived today 12 new orders has arrived today"
+  }
 ];
 
 export default function Header(props) {
@@ -150,7 +121,7 @@ export default function Header(props) {
             })}
             onClick={() => setSearchOpen(!isSearchOpen)}
           >
-            <SearchIcon classes={{ root: classes.headerIcon }} />
+            {/* <SearchIcon classes={{ root: classes.headerIcon }} /> */}
           </div>
           <InputBase
             placeholder="Search…"
@@ -160,7 +131,8 @@ export default function Header(props) {
             }}
           />
         </div>
-        <IconButton
+
+        {/* <IconButton
           color="inherit"
           aria-haspopup="true"
           aria-controls="mail-menu"
@@ -176,24 +148,8 @@ export default function Header(props) {
           >
             <NotificationsIcon classes={{ root: classes.headerIcon }} />
           </Badge>
-        </IconButton>
-        <IconButton
-          color="inherit"
-          aria-haspopup="true"
-          aria-controls="mail-menu"
-          onClick={e => {
-            setMailMenu(e.currentTarget);
-            setIsMailsUnread(false);
-          }}
-          className={classes.headerMenuButton}
-        >
-          <Badge
-            badgeContent={isMailsUnread ? messages.length : null}
-            color="secondary"
-          >
-            <MailIcon classes={{ root: classes.headerIcon }} />
-          </Badge>
-        </IconButton>
+        </IconButton> */}
+
         <IconButton
           aria-haspopup="true"
           color="inherit"
@@ -203,61 +159,7 @@ export default function Header(props) {
         >
           <AccountIcon classes={{ root: classes.headerIcon }} />
         </IconButton>
-        <Menu
-          id="mail-menu"
-          open={Boolean(mailMenu)}
-          anchorEl={mailMenu}
-          onClose={() => setMailMenu(null)}
-          MenuListProps={{ className: classes.headerMenuList }}
-          className={classes.headerMenu}
-          classes={{ paper: classes.profileMenu }}
-          disableAutoFocusItem
-        >
-          <div className={classes.profileMenuUser}>
-            <Typography variant="h4" weight="medium">
-              New Messages
-            </Typography>
-            <Typography
-              className={classes.profileMenuLink}
-              component="a"
-              color="secondary"
-            >
-              {messages.length} New Messages
-            </Typography>
-          </div>
-          {messages.map(message => (
-            <MenuItem key={message.id} className={classes.messageNotification}>
-              <div className={classes.messageNotificationSide}>
-                <UserAvatar color={message.variant} name={message.name} />
-                <Typography size="sm" color="text" colorBrightness="secondary">
-                  {message.time}
-                </Typography>
-              </div>
-              <div
-                className={classNames(
-                  classes.messageNotificationSide,
-                  classes.messageNotificationBodySide,
-                )}
-              >
-                <Typography weight="medium" gutterBottom>
-                  {message.name}
-                </Typography>
-                <Typography color="text" colorBrightness="secondary">
-                  {message.message}
-                </Typography>
-              </div>
-            </MenuItem>
-          ))}
-          <Fab
-            variant="extended"
-            color="primary"
-            aria-label="Add"
-            className={classes.sendMessageButton}
-          >
-            Send New Message
-            <SendIcon className={classes.sendButtonIcon} />
-          </Fab>
-        </Menu>
+
         <Menu
           id="notifications-menu"
           open={Boolean(notificationsMenu)}
@@ -276,6 +178,8 @@ export default function Header(props) {
             </MenuItem>
           ))}
         </Menu>
+
+
         <Menu
           id="profile-menu"
           open={Boolean(profileMenu)}

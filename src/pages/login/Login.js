@@ -40,7 +40,7 @@ function Login(props) {
     <Grid container className={classes.container}>
       <div className={classes.logotypeContainer}>
         <img src={logo} alt="logo" className={classes.logotypeImage} />
-        <Typography className={classes.logotypeText}>Material Admin</Typography>
+        <Typography className={classes.logotypeText}>AnthraXploit</Typography>
       </div>
       <div className={classes.formContainer}>
         <div className={classes.form}>
@@ -52,14 +52,14 @@ function Login(props) {
             centered
           >
             <Tab label="Login" classes={{ root: classes.tab }} />
-            <Tab label="New User" classes={{ root: classes.tab }} />
+            {/* <Tab label="New User" classes={{ root: classes.tab }} /> */}
           </Tabs>
           {activeTabId === 0 && (
             <React.Fragment>
               <Typography variant="h1" className={classes.greeting}>
                 Good Morning, User
               </Typography>
-              
+
               <Fade in={error}>
                 <Typography color="secondary" className={classes.errorMessage}>
                   Something is wrong with your login or password :(
@@ -70,8 +70,8 @@ function Login(props) {
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
+                    input: classes.textField
+                  }
                 }}
                 value={loginValue}
                 onChange={e => setLoginValue(e.target.value)}
@@ -85,8 +85,8 @@ function Login(props) {
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
+                    input: classes.textField
+                  }
                 }}
                 value={passwordValue}
                 onChange={e => setPasswordValue(e.target.value)}
@@ -110,7 +110,7 @@ function Login(props) {
                         passwordValue,
                         props.history,
                         setIsLoading,
-                        setError,
+                        setError
                       )
                     }
                     variant="contained"
@@ -130,7 +130,7 @@ function Login(props) {
               </div>
             </React.Fragment>
           )}
-          {activeTabId === 1 && (
+          {/* {activeTabId === 1 && (
             <React.Fragment>
               <Typography variant="h1" className={classes.greeting}>
                 Welcome!
@@ -148,8 +148,8 @@ function Login(props) {
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
+                    input: classes.textField
+                  }
                 }}
                 value={nameValue}
                 onChange={e => setNameValue(e.target.value)}
@@ -163,8 +163,8 @@ function Login(props) {
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
+                    input: classes.textField
+                  }
                 }}
                 value={loginValue}
                 onChange={e => setLoginValue(e.target.value)}
@@ -178,8 +178,8 @@ function Login(props) {
                 InputProps={{
                   classes: {
                     underline: classes.textFieldUnderline,
-                    input: classes.textField,
-                  },
+                    input: classes.textField
+                  }
                 }}
                 value={passwordValue}
                 onChange={e => setPasswordValue(e.target.value)}
@@ -200,7 +200,7 @@ function Login(props) {
                         passwordValue,
                         props.history,
                         setIsLoading,
-                        setError,
+                        setError
                       )
                     }
                     disabled={
@@ -227,16 +227,15 @@ function Login(props) {
                 size="large"
                 className={classnames(
                   classes.googleButton,
-                  classes.googleButtonCreating,
+                  classes.googleButtonCreating
                 )}
               >
                 <img src={google} alt="google" className={classes.googleIcon} />
                 &nbsp;Sign in with Google
               </Button>
             </React.Fragment>
-          )}
+          )} */}
         </div>
-        
       </div>
     </Grid>
   );

@@ -1,0 +1,6 @@
+{
+	"name": "Stock",
+	"version": "0.0.0",
+	"main": "Stock.js",
+	"private": true
+}

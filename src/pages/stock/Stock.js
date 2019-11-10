@@ -27,7 +27,7 @@ import * as Yup from "yup";
 import { DatePicker } from "@material-ui/pickers";
 import moment from "moment";
 
-import { fetchDataIfNeeded, setNotificationIfNeeded } from "../../actions";
+import { fetchDataIfNeeded } from "../../actions";
 
 // components
 import PageTitle from "../../components/PageTitle";
@@ -71,37 +71,36 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function Bill() {
+export default function Stock() {
   const [open, setOpen] = useState(false);
   const [openUpdate, setOpenUpdate] = useState(false);
   const [updateValues, setUpdateValues] = useState({
     id_: "",
-    cashier: "",
-    client: "",
-    amount: "",
-    date: "",
-    paid: ""
+    item_code: "",
+    qty: "",
+    retail_price: "",
+    wholesale_price: "",
+    mfd_date: "",
+    exp_date: ""
   });
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const dispatch = useDispatch();
 
-  var bill_id = 0;
-
   const selectedMenuItem = useSelector(state => state.selectedMenuItem);
 
   useEffect(() => {
-    selectedMenuItem !== "bills" &&
-      dispatch({ type: "SELECT_MENU_ITEM", menuItem: "bills" });
+    selectedMenuItem !== "stocks" &&
+      dispatch({ type: "SELECT_MENU_ITEM", menuItem: "stocks" });
   }, [selectedMenuItem, dispatch]);
 
-  dispatch(fetchDataIfNeeded("bills"));
+  dispatch(fetchDataIfNeeded("stocks"));
 
   const isLoading = useSelector(
-    state => state.dataPerMenuItem.bills.isFetching
+    state => state.dataPerMenuItem.stocks.isFetching
   );
 
-  var data = useSelector(state => state.dataPerMenuItem.bills.content.data);
+  var data = useSelector(state => state.dataPerMenuItem.stocks.content.data);
 
   var notificationData=[]
 
@@ -113,69 +112,80 @@ export default function Bill() {
       var temp = [];
 
       temp[0] = item.id_;
-      temp[1] = item.client_name;
-      temp[2] = item.amount;
-      temp[3] = moment(item.date).format("YYYY/MM/DD");
-      temp[4] = item.paid ? "Paid" : "Pending";
-      temp[5] = item.cashier;
+      temp[1] = item.item_name;
+      temp[2] = item.retail_price;
+      temp[3] = item.qty;
+      temp[4] = item.wholesale_price;
+      temp[5] = moment(item.mfd_date).format("YYYY/MM/DD");
+      temp[6] = moment(item.exp_date).format("YYYY/MM/DD");
 
       count++;
 
       dataTableData.push(temp);
 
-      var a = moment(item.date);
-      var b=moment(new Date())
+      var a = moment(item.exp_date);
+      var b = moment(new Date());
 
-      if (a.diff(b, "days") < 30 && notificationData.find((i)=>{
-          return i.id_===item.id_
-      })===undefined) {
+      if (
+        a.diff(b, "days") < 30 &&
+        notificationData.find(i => {
+          return i.id_ === item.id_;
+        }) === undefined
+      ) {
         notificationData.push(item);
       }
     });
   }
 
-  dispatch(fetchDataIfNeeded("clients"));
+  dispatch(fetchDataIfNeeded("items"));
 
-  var clientData = useSelector(state => state.dataPerMenuItem.clients.content);
+  var itemData = useSelector(state => state.dataPerMenuItem.items.content);
 
   const columns = [
     {
-      name: "Bill Number",
+      name: "ID",
       options: {
         filter: false,
         sort: true
       }
     },
     {
-      name: "Client Name",
-      options: {
-        filter: true,
-        sort: true
-      }
-    },
-    {
-      name: "Amount",
+      name: "Name",
       options: {
         filter: false,
         sort: true
       }
     },
     {
-      name: "Date",
+      name: "Retail Price",
       options: {
         filter: false,
         sort: true
       }
     },
     {
-      name: "Paid",
+      name: "Quantity",
       options: {
         filter: false,
         sort: true
       }
     },
     {
-      name: "Cashier",
+      name: "Wholesale Price",
+      options: {
+        filter: false,
+        sort: true
+      }
+    },
+    {
+      name: "Manufacture Date",
+      options: {
+        filter: false,
+        sort: true
+      }
+    },
+    {
+      name: "Expiration Date",
       options: {
         filter: false,
         sort: true
@@ -197,16 +207,16 @@ export default function Bill() {
                   onClick={() => {
                     axios({
                       method: "delete",
-                      url: `/bills/${tableMeta.rowData[0]}`
+                      url: `/stocks/${tableMeta.rowData[0]}`
                     })
                       .then(response => {
                         console.log(response);
                         if (response.status === 200) {
                           dispatch({
                             type: "INVALIDATE_MENU_ITEM",
-                            menuItem: "bills"
+                            menuItem: "stocks"
                           });
-                          dispatch(fetchDataIfNeeded("bills"));
+                          dispatch(fetchDataIfNeeded("stocks"));
                         }
                       })
                       .catch(error => {
@@ -222,20 +232,14 @@ export default function Bill() {
                   onClick={() => {
                     console.log("tableMata", tableMeta.rowData);
 
-                    bill_id = tableMeta.rowData[0];
-                    console.log("id_", bill_id);
-
-                    let cl = clientData.find(i => {
-                      return i.name === tableMeta.rowData[1];
-                    });
-
                     const val = {
                       id_: tableMeta.rowData[0],
-                      cashier: tableMeta.rowData[5],
-                      client: cl.id_,
-                      amount: tableMeta.rowData[2],
-                      date: moment(tableMeta.rowData[3]).format("YYYY/MM/DD"),
-                      paid: tableMeta.rowData[4].toLowerCase()
+                      item_code: tableMeta.rowData[1],
+                      qty: tableMeta.rowData[3],
+                      retail_price: tableMeta.rowData[2],
+                      wholesale_price: tableMeta.rowData[4],
+                      mfd_date: tableMeta.rowData[5],
+                      exp_date: tableMeta.rowData[6]
                     };
 
                     setUpdateValues(val);
@@ -257,73 +261,50 @@ export default function Bill() {
 
   return (
     <>
-      <PageTitle title="Bills" />
+      <PageTitle title="Stock" />
       <Grid container spacing={4}>
         {!isLoading && (
           <Grid item xs={12}>
-            {notificationData.map((i)=> (<Box
+            {notificationData.map(i => (
+              <Box
                 key={i.id_}
-              style={{
-                margin: "5px 0",
-                backgroundColor: "#ffd740",
-                padding: "10px",
-                borderRadius: "10px"
-              }}
-            >
-              <Grid container item xs={12}>
-                <Grid item xs={11}>
-                  <Typography
-                    align="center"
-                    color="textSecondary"
-                    variant="h5"
-                    display="block"
-                  >
-                     {`Bill number ${i.id_} has less than month till Due Date`}
-                  </Typography>
+                style={{
+                  margin: "5px 0",
+                  backgroundColor: "#ffd740",
+                  padding: "10px",
+                  borderRadius: "10px"
+                }}
+              >
+                <Grid container item xs={12}>
+                  <Grid item xs={11}>
+                    <Typography
+                      align="center"
+                      color="textSecondary"
+                      variant="h5"
+                      display="block"
+                    >
+                      {`Item number ${i.id_} has less than month till Expiration Date.`}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={1}>
+                    <Typography
+                      align="right"
+                      color="textSecondary"
+                      display="block"
+                      variant="h5"
+                      style={{
+                        margin: "0px 10px",
+                        padding: "3px"
+                      }}
+                    >
+                      X
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item xs={1}>
-                  <Typography
-                    align="right"
-                    color="textSecondary"
-                    display="block"
-                    variant="h5"
-                    style={{
-                      margin: "0px 10px",
-                      padding: "3px"
-                    }}
-                  >
-                    X
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>))}
+              </Box>
+            ))}
           </Grid>
         )}
-        <Grid item xs={12}>
-          {!isLoading && (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setOpen(true)}
-            >
-              Add
-            </Button>
-          )}
-        </Grid>
-        <Grid item xs={12}>
-          {isLoading ? (
-            <LinearProgress />
-          ) : (
-            <MUIDataTable
-              title="Bills"
-              data={dataTableData}
-              columns={columns}
-              options={{
-                filterType: "checkbox"
-              }}
-            />
-          )}
-        </Grid>
         {!isLoading && (
           <Grid
             container
@@ -335,13 +316,13 @@ export default function Bill() {
             justify="center"
           >
             <>
-              <Grid item lg={6}>
+              <Grid item xs={12}>
                 <Card
                   className={classes.card}
                   style={{ backgroundColor: "#4fc3f7", borderRadius: "10px" }}
                 >
                   <CardHeader
-                    title="Total Item Count"
+                    title="Total Stock Count"
                     titleTypographyProps={{
                       align: "center",
                       variant: "h2"
@@ -386,10 +367,38 @@ export default function Bill() {
         )}
         <Grid item xs={12}>
           {!isLoading && (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setOpen(true)}
+            >
+              Add
+            </Button>
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          {isLoading ? (
+            <LinearProgress />
+          ) : (
+            <MUIDataTable
+              title="Items"
+              data={dataTableData}
+              columns={columns}
+              options={{
+                filterType: "checkbox"
+              }}
+              style={{
+                minWidth: "500px"
+              }}
+            />
+          )}
+        </Grid>
+        <Grid item xs={12}>
+          {!isLoading && (
             <>
               <Card raised={true}>
                 <CardHeader
-                  title="Bills Entered by Date"
+                  title="Expiration Date"
                   titleTypographyProps={{
                     align: "center",
                     variant: "h2"
@@ -414,45 +423,64 @@ export default function Bill() {
           <div style={modalStyle} className={classes.paper}>
             <Formik
               initialValues={{
-                cashier: "",
-                client: "",
-                amount: "",
-                // date_added: new Date(),
-                date_added: "",
-                paid: ""
+                item_code: "",
+                retail_price: "",
+                qty: "",
+                wholesale_price: "",
+                mfd_date: new Date(),
+                exp_date: new Date()
               }}
               validationSchema={() => {
                 return Yup.object({
-                  cashier: Yup.string()
-                    .max(100, "Must be 100 characters or less")
-                    .trim()
-                    .lowercase()
+                  item_code: Yup.string().required("Required"),
+                  retail_price: Yup.number()
+                    .min(1, "Must be a number greater than one")
+                    .max(1000000, "Too big. Enter smaller value.")
+                    .positive("Should be a positive number.")
                     .required("Required"),
-                  amount: Yup.number()
+                  qty: Yup.number()
                     .min(1, "Must be a number greater than one")
                     .max(1000000, "Too big. Enter smaller value.")
                     .positive("Should be a positive number.")
                     .integer("Should be a integer.")
                     .required("Required"),
-                  date_added: Yup.date()
+                  wholesale_price: Yup.number()
+                    .min(1, "Must be a number greater than one")
+                    .max(1000000, "Too big. Enter smaller value.")
+                    .positive("Should be a positive number.")
+                    .integer("Should be a integer.")
+                    .required("Required"),
+                  mfd_date: Yup.date()
                     .min("2000/01/01")
                     .required("Required"),
-                  paid: Yup.mixed().required("Please selece a value"),
-                  client: Yup.mixed().required("Please selece a value")
+                  exp_date: Yup.date()
+                    .min("2000/01/01")
+                    .when(
+                      "mfd_date",
+                      (mfd_date, schema) =>
+                        mfd_date &&
+                        schema.min(
+                          mfd_date,
+                          "This should be grater than Manufacture Date"
+                        )
+                    )
+                    .required("Required")
                 });
               }}
               onSubmit={(values, { setSubmitting }) => {
                 console.log(values);
                 axios({
                   method: "post",
-                  url: "/bills/",
+                  url: "/stocks/",
                   data: {
-                    cashier: values.cashier,
-                    client: values.client,
-                    amount: values.amount,
-                    paid: values.paid,
-                    date: moment(values.date_added).format("YYYY/MM/DD")
-                  }
+                    item_code: values.item_code,
+                    qty: values.qty,
+                    retail_price: values.retail_price,
+                    wholesale_price: values.wholesale_price,
+                    mfd_date: values.mfd_date,
+                    exp_date: values.exp_date
+                  },
+                  headers: { "content-type": "application/json" }
                 })
                   .then(response => {
                     console.log(response);
@@ -461,9 +489,9 @@ export default function Bill() {
                       setOpen(false);
                       dispatch({
                         type: "INVALIDATE_MENU_ITEM",
-                        menuItem: "bills"
+                        menuItem: "stocks"
                       });
-                      dispatch(fetchDataIfNeeded("bills"));
+                      dispatch(fetchDataIfNeeded("stocks"));
                     }
                   })
                   .catch(error => {
@@ -479,15 +507,15 @@ export default function Bill() {
                     gutterBottom={true}
                     variant="h1"
                   >
-                    Add New Bill
+                    Add Stock
                   </Typography>
                   <Form>
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <Field
                           type="text"
-                          name="client"
-                          label="Client"
+                          name="item_code"
+                          label="Item"
                           select
                           variant="standard"
                           helperText="Please select Range"
@@ -495,7 +523,7 @@ export default function Bill() {
                           fullWidth
                           component={TextField}
                         >
-                          {clientData.map(data => (
+                          {itemData.map(data => (
                             <MenuItem key={data.id_} value={data.id_}>
                               {data.name}
                             </MenuItem>
@@ -505,18 +533,38 @@ export default function Bill() {
                       <Grid item xs={12}>
                         <Field
                           type="number"
-                          label="Amount"
-                          name="amount"
+                          label="Retail Price"
+                          name="retail_price"
                           component={TextField}
                           fullWidth
                         />
                       </Grid>
                       <Grid item xs={12}>
                         <Field
-                          label="Date"
-                          name="date_added"
+                          type="number"
+                          label="Quantity"
+                          name="qty"
+                          component={TextField}
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Field
+                          type="number"
+                          label="Wholesale Price"
+                          name="wholesale_price"
+                          component={TextField}
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item sm={6}>
+                        <Field
+                          label="Manufacture Date"
+                          name="mfd_date"
                           fullWidth
                           component={({ field, form, ...other }) => {
+                            const currentError = form.errors[field.name];
+
                             return (
                               <DatePicker
                                 clearable
@@ -525,8 +573,15 @@ export default function Bill() {
                                 openTo="year"
                                 format="YYYY/MM/DD"
                                 views={["year", "month", "date"]}
+                                // helperText={currentError}
+                                // error={Boolean(currentError)}
+                                // onError={error => {
+                                //   if (error !== currentError) {
+                                //     form.setFieldError(field.name, error);
+                                //   }
+                                // }}
                                 onChange={date =>
-                                  form.setFieldValue(field.name, date, false)
+                                  form.setFieldValue(field.name, date, true)
                                 }
                                 {...other}
                               />
@@ -534,32 +589,36 @@ export default function Bill() {
                           }}
                         />
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item sm={6}>
                         <Field
-                          type="text"
-                          name="paid"
-                          label="Paid"
-                          select
-                          variant="standard"
-                          margin="normal"
+                          label="Expiration Date"
+                          name="exp_date"
                           fullWidth
-                          component={TextField}
-                        >
-                          <MenuItem key="1" value="paid">
-                            Pending
-                          </MenuItem>
-                          <MenuItem key="2" value="pending">
-                            Paid
-                          </MenuItem>
-                        </Field>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          type="text"
-                          label="Cashier"
-                          name="cashier"
-                          component={TextField}
-                          fullWidth
+                          component={({ field, form, ...other }) => {
+                            const currentError = form.errors[field.name];
+
+                            return (
+                              <DatePicker
+                                clearable
+                                name={field.name}
+                                value={field.value}
+                                openTo="year"
+                                format="YYYY/MM/DD"
+                                views={["year", "month", "date"]}
+                                helperText={currentError}
+                                error={Boolean(currentError)}
+                                onError={error => {
+                                  if (error !== currentError) {
+                                    form.setFieldError(field.name, error);
+                                  }
+                                }}
+                                onChange={date =>
+                                  form.setFieldValue(field.name, date._d, true)
+                                }
+                                {...other}
+                              />
+                            );
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12}>
@@ -592,8 +651,6 @@ export default function Bill() {
           </div>
         </Fade>
       </Modal>
-
-      {/* Edit model */}
       <Modal
         open={openUpdate}
         onClose={() => setOpenUpdate(false)}
@@ -605,45 +662,62 @@ export default function Bill() {
           <div style={modalStyle} className={classes.paper}>
             <Formik
               initialValues={{
-                id_: updateValues.id_,
-                cashier: updateValues.cashier,
-                client: updateValues.client,
-                amount: updateValues.amount,
-                date: moment(updateValues.date).format("YYYY/MM/DD"),
-                paid: updateValues.paid
+                item_code: updateValues.item_code,
+                retail_price: updateValues.retail_price,
+                qty: updateValues.qty,
+                wholesale_price: updateValues.wholesale_price,
+                mfd_date: updateValues.mfd_date,
+                exp_date: updateValues.exp_date
               }}
               validationSchema={() => {
                 return Yup.object({
-                  cashier: Yup.string()
-                    .max(100, "Must be 100 characters or less")
-                    .trim()
-                    .lowercase()
+                  retail_price: Yup.number()
+                    .min(1, "Must be a number greater than one")
+                    .max(1000000, "Too big. Enter smaller value.")
+                    .positive("Should be a positive number.")
                     .required("Required"),
-                  amount: Yup.number()
+                  qty: Yup.number()
                     .min(1, "Must be a number greater than one")
                     .max(1000000, "Too big. Enter smaller value.")
                     .positive("Should be a positive number.")
                     .integer("Should be a integer.")
                     .required("Required"),
-                  date: Yup.date()
+                  wholesale_price: Yup.number()
+                    .min(1, "Must be a number greater than one")
+                    .max(1000000, "Too big. Enter smaller value.")
+                    .positive("Should be a positive number.")
+                    .integer("Should be a integer.")
+                    .required("Required"),
+                  mfd_date: Yup.date()
                     .min("2000/01/01")
                     .required("Required"),
-                  paid: Yup.mixed().required("Please selece a value"),
-                  client: Yup.mixed().required("Please selece a value")
+                  exp_date: Yup.date()
+                    .min("2000/01/01")
+                    .when(
+                      "mfd_date",
+                      (mfd_date, schema) =>
+                        mfd_date &&
+                        schema.min(
+                          mfd_date,
+                          "This should be grater than Manufacture Date"
+                        )
+                    )
+                    .required("Required")
                 });
               }}
               onSubmit={(values, { setSubmitting }) => {
                 console.log(values);
                 axios({
                   method: "put",
-                  url: `/bills/${values.id_}`,
+                  url: `/stocks/${updateValues.id_}`,
                   data: {
-                    cashier: values.cashier,
-                    client: values.client,
-                    amount: values.amount,
-                    paid: values.paid,
-                    date: moment(values.date).format("YYYY/MM/DD")
-                  }
+                    qty: values.qty,
+                    retail_price: values.retail_price,
+                    wholesale_price: values.wholesale_price,
+                    mfd_date: values.mfd_date,
+                    exp_date: values.exp_date
+                  },
+                  headers: { "content-type": "application/json" }
                 })
                   .then(response => {
                     console.log(response);
@@ -652,9 +726,9 @@ export default function Bill() {
                       setOpenUpdate(false);
                       dispatch({
                         type: "INVALIDATE_MENU_ITEM",
-                        menuItem: "bills"
+                        menuItem: "stocks"
                       });
-                      dispatch(fetchDataIfNeeded("bills"));
+                      dispatch(fetchDataIfNeeded("stocks"));
                     }
                   })
                   .catch(error => {
@@ -670,15 +744,15 @@ export default function Bill() {
                     gutterBottom={true}
                     variant="h1"
                   >
-                    Update Bill
+                    Add Stock
                   </Typography>
                   <Form>
                     <Grid container spacing={3}>
                       <Grid item xs={12}>
                         <Field
-                          type="number"
-                          label="Bill Number"
-                          name="id_"
+                          type="text"
+                          label="Item"
+                          name="item_code"
                           component={TextField}
                           fullWidth
                           disabled
@@ -686,36 +760,35 @@ export default function Bill() {
                       </Grid>
                       <Grid item xs={12}>
                         <Field
-                          type="text"
-                          name="client"
-                          label="Client"
-                          select
-                          variant="standard"
-                          helperText="Please select Range"
-                          margin="normal"
-                          fullWidth
-                          component={TextField}
-                        >
-                          {clientData.map(data => (
-                            <MenuItem key={data.id_} value={data.id_}>
-                              {data.name}
-                            </MenuItem>
-                          ))}
-                        </Field>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Field
                           type="number"
-                          label="Amount"
-                          name="amount"
+                          label="Retail Price"
+                          name="retail_price"
                           component={TextField}
                           fullWidth
                         />
                       </Grid>
                       <Grid item xs={12}>
                         <Field
-                          label="Date"
-                          name="date"
+                          type="number"
+                          label="Quantity"
+                          name="qty"
+                          component={TextField}
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <Field
+                          type="number"
+                          label="Wholesale Price"
+                          name="wholesale_price"
+                          component={TextField}
+                          fullWidth
+                        />
+                      </Grid>
+                      <Grid item sm={6}>
+                        <Field
+                          label="Manufacture Date"
+                          name="mfd_date"
                           fullWidth
                           component={({ field, form, ...other }) => {
                             const currentError = form.errors[field.name];
@@ -744,32 +817,36 @@ export default function Bill() {
                           }}
                         />
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item sm={6}>
                         <Field
-                          type="text"
-                          name="paid"
-                          label="Paid"
-                          select
-                          variant="standard"
-                          margin="normal"
+                          label="Expiration Date"
+                          name="exp_date"
                           fullWidth
-                          component={TextField}
-                        >
-                          <MenuItem key="1" value="paid">
-                            Pending
-                          </MenuItem>
-                          <MenuItem key="2" value="pending">
-                            Paid
-                          </MenuItem>
-                        </Field>
-                      </Grid>
-                      <Grid item xs={12}>
-                        <Field
-                          type="text"
-                          label="Cashier"
-                          name="cashier"
-                          component={TextField}
-                          fullWidth
+                          component={({ field, form, ...other }) => {
+                            const currentError = form.errors[field.name];
+
+                            return (
+                              <DatePicker
+                                clearable
+                                name={field.name}
+                                value={field.value}
+                                openTo="year"
+                                format="YYYY/MM/DD"
+                                views={["year", "month", "date"]}
+                                helperText={currentError}
+                                error={Boolean(currentError)}
+                                onError={error => {
+                                  if (error !== currentError) {
+                                    form.setFieldError(field.name, error);
+                                  }
+                                }}
+                                onChange={date =>
+                                  form.setFieldValue(field.name, date._d, true)
+                                }
+                                {...other}
+                              />
+                            );
+                          }}
                         />
                       </Grid>
                       <Grid item xs={12}>

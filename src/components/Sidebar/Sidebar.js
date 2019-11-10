@@ -12,7 +12,8 @@ import {
 	AttachMoney as AttachMoneyIcon,
 	LocalAtm as LocalAtmIcon,
 	Group as GroupIcon,
-	Settings as SettingsIcon
+	Settings as SettingsIcon,
+    BrandingWatermark
 } from "@material-ui/icons";
 import { useTheme } from "@material-ui/styles";
 import { withRouter } from "react-router-dom";
@@ -32,45 +33,51 @@ import {
 } from "../../context/LayoutContext";
 
 const structure = [
-	{ id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
-	{
-		id: 1,
-		label: "Items",
-		link: "/app/items",
-		icon: <FormatListBulletedIcon />
-	},
-	{
-		id: 2,
-		label: "Distributors",
-		link: "/app/distributors",
-		icon: <LocalShippingIcon />
-	},
-	{
-		id: 3,
-		label: "Clients",
-		link: "/app/clients",
-		icon: <PersonIcon />
-	},
-	{
-		id: 4,
-		label: "Payments",
-		link: "/app/payments",
-		icon: <AttachMoneyIcon />
-	},
-	{
-		id: 5,
-		label: "Bill",
-		link: "/app/bill",
-		icon: <LocalAtmIcon />
-	},
-	{ id: 6, type: "divider" },
-	{ id: 7, type: "title", label: "Settings" },
-	{ id: 8, label: "Users", link: "/app/users", icon: <GroupIcon /> },
-	{ id: 9, label: "Config", link: "/app/config", icon: <SettingsIcon /> }//,
-	// { id: 10, type: "divider" },
-	// { id: 11, type: "title", label: "HELP" },
-	// { id: 12, label: "Support", link: "/app/support", icon: <SupportIcon /> },
-	// { id: 13, label: "FAQ", link: "/app/faq", icon: <FAQIcon /> }
+  // { id: 0, label: "Dashboard", link: "/app/dashboard", icon: <HomeIcon /> },
+  {
+    id: 0,
+    label: "Stock",
+    link: "/app/stock",
+    icon: <BrandingWatermark />
+  },
+  {
+    id: 1,
+    label: "Items",
+    link: "/app/items",
+    icon: <FormatListBulletedIcon />
+  },
+  {
+    id: 2,
+    label: "Distributors",
+    link: "/app/distributors",
+    icon: <LocalShippingIcon />
+  },
+  {
+    id: 3,
+    label: "Clients",
+    link: "/app/clients",
+    icon: <PersonIcon />
+  },
+  {
+    id: 4,
+    label: "Payments",
+    link: "/app/payments",
+    icon: <AttachMoneyIcon />
+  },
+  {
+    id: 5,
+    label: "Bill",
+    link: "/app/bill",
+    icon: <LocalAtmIcon />
+  },
+  { id: 6, type: "divider" },
+//   { id: 7, type: "title", label: "Settings" },
+  { id: 7, label: "Users", link: "/app/users", icon: <GroupIcon /> }//,
+//   { id: 9, label: "Config", link: "/app/config", icon: <SettingsIcon /> },
+//   { id: 10, type: "divider" },
+//   { id: 11, type: "title", label: "HELP" },
+//   { id: 12, label: "Support", link: "/app/support", icon: <SupportIcon /> },
+//   { id: 13, label: "FAQ", link: "/app/faq", icon: <FAQIcon /> }
 ];
 
 function Sidebar({ location }) {

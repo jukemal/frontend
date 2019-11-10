@@ -11,6 +11,7 @@ import Sidebar from "../Sidebar";
 
 // pages
 import Dashboard from "../../pages/dashboard";
+import Stock from '../../pages/stock'
 import Items from "../../pages/items";
 import Distributors from "../../pages/distributors";
 import Clients from "../../pages/clients";
@@ -31,35 +32,33 @@ function Layout(props) {
 	var layoutState = useLayoutState();
 
 	return (
-		<div className={classes.root}>
-			<>
-				<Header history={props.history} />
-				<Sidebar />
-				<div
-					className={classnames(classes.content, {
-						[classes.contentShift]: layoutState.isSidebarOpened
-					})}
-				>
-					<div className={classes.fakeToolbar} />
-					<Switch>
-						<Route path="/app/dashboard" component={Dashboard} />
-						<Route path="/app/items" component={Items} />
-						<Route
-							path="/app/distributors"
-							component={Distributors}
-						/>
-						<Route path="/app/clients" component={Clients} />
-						<Route path="/app/payments" component={Payments} />
-						<Route path="/app/bill" component={Bill} />
-						<Route path="/app/users" component={Users} />
-						<Route path="/app/config" component={Config} />
+    <div className={classes.root}>
+      <>
+        <Header history={props.history} />
+        <Sidebar />
+        <div
+          className={classnames(classes.content, {
+            [classes.contentShift]: layoutState.isSidebarOpened
+          })}
+        >
+          <div className={classes.fakeToolbar} />
+          <Switch>
+            {/* <Route path="/app/dashboard" component={Dashboard} /> */}
+            <Route path="/app/stock" component={Stock} />
+            <Route path="/app/items" component={Items} />
+            <Route path="/app/distributors" component={Distributors} />
+            <Route path="/app/clients" component={Clients} />
+            <Route path="/app/payments" component={Payments} />
+            <Route path="/app/bill" component={Bill} />
+            <Route path="/app/users" component={Users} />
+            {/* <Route path="/app/config" component={Config} />
 						<Route path="/app/support" component={Support} />
-						<Route path="/app/faq" component={Faq} />
-					</Switch>
-				</div>
-			</>
-		</div>
-	);
+						<Route path="/app/faq" component={Faq} /> */}
+          </Switch>
+        </div>
+      </>
+    </div>
+  );
 }
 
 export default withRouter(Layout);
