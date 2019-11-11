@@ -69,10 +69,10 @@ const structure = [
     label: "Bill",
     link: "/app/bill",
     icon: <LocalAtmIcon />
-  },
-  { id: 6, type: "divider" },
+  }//,
+//   { id: 6, type: "divider" },
 //   { id: 7, type: "title", label: "Settings" },
-  { id: 7, label: "Users", link: "/app/users", icon: <GroupIcon /> }//,
+//   { id: 7, label: "Users", link: "/app/users", icon: <GroupIcon /> }//,
 //   { id: 9, label: "Config", link: "/app/config", icon: <SettingsIcon /> },
 //   { id: 10, type: "divider" },
 //   { id: 11, type: "title", label: "HELP" },

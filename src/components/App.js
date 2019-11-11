@@ -14,6 +14,9 @@ import { useUserState } from "../context/UserContext";
 
 axios.defaults.baseURL = "https://anthraxploit-api.herokuapp.com";
 axios.defaults.headers["Content-Type"] = "application/json";
+axios.defaults.headers["Authorization"] = localStorage.getItem(
+  "id_token"
+);
 
 export default function App() {
 	// global

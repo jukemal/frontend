@@ -50,7 +50,7 @@ function Layout(props) {
             <Route path="/app/clients" component={Clients} />
             <Route path="/app/payments" component={Payments} />
             <Route path="/app/bill" component={Bill} />
-            <Route path="/app/users" component={Users} />
+            {/* <Route path="/app/users" component={Users} /> */}
             {/* <Route path="/app/config" component={Config} />
 						<Route path="/app/support" component={Support} />
 						<Route path="/app/faq" component={Faq} /> */}

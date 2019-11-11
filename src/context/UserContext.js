@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 
 var UserStateContext = React.createContext();
 var UserDispatchContext = React.createContext();
@@ -53,20 +54,48 @@ function loginUser(dispatch, login, password, history, setIsLoading, setError) {
   setError(false);
   setIsLoading(true);
 
-  if (!!login && !!password) {
-    setTimeout(() => {
-      localStorage.setItem("id_token", "1");
-      dispatch({ type: "LOGIN_SUCCESS" });
-      setError(null);
-      setIsLoading(false);
+//   if (!!login && !!password) {
+//     setTimeout(() => {
+//       localStorage.setItem("id_token", "1");
+//       dispatch({ type: "LOGIN_SUCCESS" });
+//       setError(null);
+//       setIsLoading(false);
 
-      history.push("/app/dashboard");
-    }, 2000);
-  } else {
-    dispatch({ type: "LOGIN_FAILURE" });
-    setError(true);
-    setIsLoading(false);
-  }
+//       history.push("/app/dashboard");
+//     }, 2000);
+//   } else {
+//     dispatch({ type: "LOGIN_FAILURE" });
+//     setError(true);
+//     setIsLoading(false);
+//   }
+
+  axios({
+    method: "post",
+    url: `/users/login`,
+    data: {
+      username:login,
+      password:password
+    }
+  })
+    .then(response => {
+      console.log(response);
+      if (response.status === 200) {
+        localStorage.setItem("id_token", response.data.token);
+        dispatch({ type: "LOGIN_SUCCESS" });
+        setError(null);
+        setIsLoading(false);
+
+        history.push("/app/stock");
+      }else{
+          dispatch({ type: "LOGIN_FAILURE" });
+          setError(true);
+          setIsLoading(false);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+
+    });
 }
 
 function signOut(dispatch, history) {
